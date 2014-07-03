@@ -12,7 +12,10 @@ public class GuiNonMultiplayerMainMenu extends GuiMainMenu
     {
     	super.initGui();
     	
-    	GuiButton modsButton = (GuiButton)this.buttonList.get(2);
+    	GuiButton singleplayerButton = (GuiButton)this.buttonList.get(0);
+    	GuiButton multiplayerButton = (GuiButton)this.buttonList.get(1);
+    	GuiButton realmsButton = (GuiButton)this.buttonList.get(2);
+    	GuiButton modsButton = (GuiButton)this.buttonList.get(3); 
     	GuiButton optionsButton = (GuiButton)this.buttonList.get(4);
     	GuiButton quitButton = (GuiButton)this.buttonList.get(5);
     	GuiButton languageButton = (GuiButton)this.buttonList.get(6);
@@ -28,12 +31,12 @@ public class GuiNonMultiplayerMainMenu extends GuiMainMenu
     	{
         	this.buttonList.remove(1); //Multiplayer Button
     		
+        	realmsButton.yPosition -= 24;
     		modsButton.yPosition -= 24;
-    		optionsButton.yPosition -=24;
-
-    		quitButton.yPosition -= 24;
-
+    		
     		languageButton.yPosition -= 24;
+    		optionsButton.yPosition -=24;
+    		quitButton.yPosition -= 24;
     	}
     }
 }
