@@ -1,0 +1,18 @@
+[{
+    "modid": "Lockdown",
+    "name": "Lockdown",
+    "description": "Allows the removal of a few GUI elements, and allows for a world to be copied instead when a new world should be created.",
+    "version": "${mod_version}",
+    "mcversion": "${minecraft_version}",
+    "url": "",
+    "updateUrl": "",
+    "authors": ["Adubbz"],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "parent": "",
+    "requiredMods": [],
+    "dependencies": [],
+    "dependants": [],
+    "useDependencyInformation": "false"
+}]
