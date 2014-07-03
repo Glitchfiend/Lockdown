@@ -3,17 +3,19 @@ package adubbz.lockdown.gui;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.io.FileUtils;
-
-import adubbz.lockdown.Lockdown;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiCreateWorld;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.stats.StatList;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.ISaveFormat;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.Level;
+
+import adubbz.lockdown.Lockdown;
+import adubbz.lockdown.util.LDLogger;
+import adubbz.lockdown.util.LDObfuscationHelper;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 
 public class GuiCreateFixedWorld extends GuiCreateWorld
@@ -36,8 +38,8 @@ public class GuiCreateFixedWorld extends GuiCreateWorld
     	{
     		this.buttonList.remove(2); //Game Mode
 
-    		ObfuscationReflectionHelper.setPrivateValue(GuiCreateWorld.class, this, "", "gameModeDescriptionLine1", "field_73920_A");
-    		ObfuscationReflectionHelper.setPrivateValue(GuiCreateWorld.class, this, "", "gameModeDescriptionLine2", "field_73922_B");
+    		ObfuscationReflectionHelper.setPrivateValue(GuiCreateWorld.class, this, "", LDObfuscationHelper.gameModeDescriptionLine1);
+    		ObfuscationReflectionHelper.setPrivateValue(GuiCreateWorld.class, this, "", LDObfuscationHelper.gameModeDescriptionLine2);
     	}
     }
 
@@ -57,8 +59,8 @@ public class GuiCreateFixedWorld extends GuiCreateWorld
             
             File mcDataDir = this.mc.mcDataDir;
             
-            String folderName = ObfuscationReflectionHelper.getPrivateValue(GuiCreateWorld.class, this, "folderName", "field_73918_d");
-            String worldName = ((GuiTextField)ObfuscationReflectionHelper.getPrivateValue(GuiCreateWorld.class, this, "textboxWorldName", "field_73919_b")).getText().trim();
+            String folderName = ObfuscationReflectionHelper.getPrivateValue(GuiCreateWorld.class, this, LDObfuscationHelper.folderName);
+            String worldName = ((GuiTextField)ObfuscationReflectionHelper.getPrivateValue(GuiCreateWorld.class, this, LDObfuscationHelper.textboxWorldName)).getText().trim();
             
             try
             {
@@ -66,7 +68,7 @@ public class GuiCreateFixedWorld extends GuiCreateWorld
             }
             catch (IOException e)
             {
-            	System.out.println("The template world does not exist at " + Lockdown.templateDirectory);
+            	LDLogger.log(Level.ERROR, "The template world does not exist at " + Lockdown.templateDirectory, e);
             	return;
             }
             
@@ -76,7 +78,6 @@ public class GuiCreateFixedWorld extends GuiCreateWorld
             if (this.mc.getSaveLoader().canLoadWorld(folderName))
             {
                 this.mc.launchIntegratedServer(folderName, worldName, (WorldSettings)null);
-                this.mc.statFileWriter.readStat(StatList.loadWorldStat, 1);
             }
     	}
     	else

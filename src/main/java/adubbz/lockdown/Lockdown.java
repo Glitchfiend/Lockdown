@@ -1,9 +1,9 @@
 package adubbz.lockdown;
 
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 
-import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 import adubbz.lockdown.eventhandler.WorldCreationEventHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
@@ -46,7 +46,7 @@ public class Lockdown
     	}
     	catch (Exception e)
     	{
-    		FMLLog.log(Level.SEVERE, "Lockdown has had a problem loading its configuration", e);
+    		FMLLog.log(Level.ERROR, "Lockdown has had a problem loading its configuration", e);
     	}
     	finally
     	{
