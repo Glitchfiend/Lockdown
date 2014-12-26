@@ -14,7 +14,7 @@ public class WorldCreationEventHandler
 	@ForgeSubscribe
 	public void modifyWorldCreation(GuiOpenEvent event)
 	{
-		if (event.gui instanceof GuiMainMenu && !(event.gui instanceof GuiNonMultiplayerMainMenu))
+		if (event.gui instanceof GuiMainMenu && Lockdown.disableMultiplayer && !(event.gui instanceof GuiNonMultiplayerMainMenu))
 		{
 			GuiMainMenu guiMainMenu = (GuiMainMenu)event.gui;
 			

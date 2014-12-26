@@ -24,16 +24,13 @@ public class GuiNonMultiplayerMainMenu extends GuiMainMenu
     		ObfuscationReflectionHelper.setPrivateValue(GuiButton.class, optionsButton, 200, "width", "field_73747_a");
     	}*/
     	
-    	if (Lockdown.disableMultiplayer)
-    	{
-        	this.buttonList.remove(1); //Multiplayer Button
-    		
-    		modsButton.yPosition -= 24;
-    		optionsButton.yPosition -=24;
+        this.buttonList.remove(1); //Multiplayer Button
 
-    		quitButton.yPosition -= 24;
+    	modsButton.yPosition -= 24;
+    	optionsButton.yPosition -=24;
 
-    		languageButton.yPosition -= 24;
-    	}
+    	quitButton.yPosition -= 24;
+
+    	languageButton.yPosition -= 24;
     }
 }
