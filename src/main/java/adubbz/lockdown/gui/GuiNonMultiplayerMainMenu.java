@@ -1,7 +1,7 @@
 package adubbz.lockdown.gui;
 
 import adubbz.lockdown.Lockdown;
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;
 
