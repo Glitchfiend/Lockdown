@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Level;
 import adubbz.lockdown.Lockdown;
 import adubbz.lockdown.util.LDLogger;
 import adubbz.lockdown.util.LDObfuscationHelper;
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 public class GuiCreateFixedWorld extends GuiCreateWorld
 {
@@ -82,7 +82,11 @@ public class GuiCreateFixedWorld extends GuiCreateWorld
     	}
     	else
     	{
+            try {
     		super.actionPerformed(guiButton);
+            } catch (IOException e) {
+                LDLogger.log(Level.ERROR, "Action couldn't be performed ",e);
+            }
     	}
     }
 }
