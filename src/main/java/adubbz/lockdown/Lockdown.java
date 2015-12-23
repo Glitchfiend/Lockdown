@@ -26,7 +26,9 @@ public class Lockdown
     
     public static boolean disableMultiplayer;
     //public static boolean disableQuit;
-    
+
+    public static boolean enableOverridingTerrainGen;
+
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
@@ -40,7 +42,8 @@ public class Lockdown
     		disableWorldCreation = config.get("World Creation", "Disable Regular World Creation", true).getBoolean(true);
     		disableGameMode = config.get("World Creation", "Disable Game Mode Button", true).getBoolean(true);
     		disableMoreWorldOptions = config.get("World Creation", "Disable More World Options Button", true).getBoolean(true);
-    		
+            enableOverridingTerrainGen = config.get("World Creation", "Enable Overriding Template World Settings", false).getBoolean(false);
+
     		disableMultiplayer = config.get("Main Menu", "Disable Multiplayer Button", true).getBoolean(true);
     		//disableQuit = config.get("Main Menu", "Disable Quit Button", true).getBoolean(true);
     	}
