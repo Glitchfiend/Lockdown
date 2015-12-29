@@ -128,9 +128,13 @@ public class GuiCreateFixedWorld extends GuiCreateWorld
 
                 // This normally happens once in the instance is started, but this code is skipped if a save already
                 // exists. We're going to flatten the copied save settings with the ones the user just defined.
-                WorldInfo worldinfo = new WorldInfo(worldsettings, folderName);
+                // However, we have to make sure it's JUST the world settings. We need to keep the player's coordinates,
+                // inventory, game mode, and whatever other miscellaneous junk.
                 ISaveFormat saveLoader = new AnvilSaveConverter(new File(this.mc.mcDataDir, "saves"));
                 ISaveHandler isavehandler = saveLoader.getSaveLoader(folderName, false);
+                WorldInfo worldinfo = isavehandler.loadWorldInfo();
+                worldinfo.populateFromWorldSettings(worldsettings);
+
                 isavehandler.saveWorldInfo(worldinfo);
             }
 
