@@ -9,6 +9,7 @@ import adubbz.lockdown.gui.GuiNonMultiplayerMainMenu;
 import adubbz.lockdown.util.LDObfuscationHelper;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import adubbz.lockdown.Lockdown;
 
 public class WorldCreationEventHandler 
 {
