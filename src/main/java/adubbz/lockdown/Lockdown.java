@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = "Lockdown", name = "Lockdown")
+@Mod(modid = "Lockdown", name = "Lockdown", clientSideOnly = true)
 public class Lockdown 
 {
     @Instance("Lockdown")
