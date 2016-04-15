@@ -1,2 +1,10 @@
-build
-.gradle
+/build/
+/bin/
+/repo/
+/run/
+.gradle/
+.settings/*
+.classpath
+.project
+# OS generated files
+*.DS_Store

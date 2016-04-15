@@ -4,26 +4,20 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiCreateWorld;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.util.MathHelper;
-import net.minecraft.world.WorldSettings;
-import net.minecraft.world.WorldType;
-import net.minecraft.world.chunk.storage.AnvilSaveConverter;
-import net.minecraft.world.storage.ISaveFormat;
-
-import net.minecraft.world.storage.ISaveHandler;
-import net.minecraft.world.storage.WorldInfo;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 
 import adubbz.lockdown.Lockdown;
-import adubbz.lockdown.util.LDLogger;
-import adubbz.lockdown.util.LDObfuscationHelper;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiCreateWorld;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.world.WorldSettings;
+import net.minecraft.world.WorldType;
+import net.minecraft.world.chunk.storage.AnvilSaveConverter;
+import net.minecraft.world.storage.ISaveFormat;
+import net.minecraft.world.storage.ISaveHandler;
+import net.minecraft.world.storage.WorldInfo;
 
 public class GuiCreateFixedWorld extends GuiCreateWorld
 {
@@ -45,8 +39,8 @@ public class GuiCreateFixedWorld extends GuiCreateWorld
     	{
     		this.buttonList.remove(2); //Game Mode
 
-    		ObfuscationReflectionHelper.setPrivateValue(GuiCreateWorld.class, this, "", LDObfuscationHelper.gameModeDescriptionLine1);
-    		ObfuscationReflectionHelper.setPrivateValue(GuiCreateWorld.class, this, "", LDObfuscationHelper.gameModeDescriptionLine2);
+    		this.gameModeDesc1 = "";
+    		this.gameModeDesc2 = "";
     	}
     }
 
@@ -66,39 +60,25 @@ public class GuiCreateFixedWorld extends GuiCreateWorld
             
             File mcDataDir = this.mc.mcDataDir;
             
-            String folderName = ObfuscationReflectionHelper.getPrivateValue(GuiCreateWorld.class, this, LDObfuscationHelper.folderName);
-            String worldName = ((GuiTextField)ObfuscationReflectionHelper.getPrivateValue(GuiCreateWorld.class, this, LDObfuscationHelper.textboxWorldName)).getText().trim();
-            
             try
             {
-            	FileUtils.copyDirectory(new File(mcDataDir.getAbsoluteFile() + File.separator + Lockdown.templateDirectory), new File(mcDataDir.getAbsoluteFile() + File.separator + "saves" + File.separator + folderName));
+            	FileUtils.copyDirectory(new File(mcDataDir.getAbsoluteFile() + File.separator + Lockdown.templateDirectory), new File(mcDataDir.getAbsoluteFile() + File.separator + "saves" + File.separator + this.saveDirName));
             }
             catch (IOException e)
             {
-            	LDLogger.log(Level.ERROR, "The template world does not exist at " + Lockdown.templateDirectory, e);
+            	Lockdown.logger.log(Level.ERROR, "The template world does not exist at " + Lockdown.templateDirectory, e);
             	return;
             }
             
             ISaveFormat isaveformat = this.mc.getSaveLoader();
-            isaveformat.renameWorld(folderName, worldName);
+            isaveformat.renameWorld(this.saveDirName, worldName);
 
             WorldSettings worldsettings = null;     // Default will just use the template's world settings.
 
             if(Lockdown.enableOverridingTerrainGen)
             {
-
-                // This mostly follows what a Vanilla instance would already do, excepting that we have to rip out all
-                // the private fields. We are going to populate worldsettings ourselves. One exception is we go out of
-                // our way to check that commands need to be enabled.
-                GuiTextField seedTextField = ObfuscationReflectionHelper.getPrivateValue(GuiCreateWorld.class, this, "field_146335_h");
-                String gameModeName = ObfuscationReflectionHelper.getPrivateValue(GuiCreateWorld.class, this, "field_146342_r");
-                boolean generateStructures = ObfuscationReflectionHelper.getPrivateValue(GuiCreateWorld.class, this, "field_146341_s");
-                boolean bonusChest = ObfuscationReflectionHelper.getPrivateValue(GuiCreateWorld.class, this, "field_146337_w");
-                boolean commandsAllowed = ObfuscationReflectionHelper.getPrivateValue(GuiCreateWorld.class, this, "field_146344_y");
-                int terrainType = ObfuscationReflectionHelper.getPrivateValue(GuiCreateWorld.class, this, "field_146331_K");
-
                 long defaultSeed = (new Random()).nextLong();
-                String seedText = seedTextField.getText();
+                String seedText = this.worldSeedField.getText();
 
                 if (!StringUtils.isEmpty(seedText))
                 {
@@ -117,11 +97,11 @@ public class GuiCreateFixedWorld extends GuiCreateWorld
                     }
                 }
 
-                WorldSettings.GameType gametype = WorldSettings.GameType.getByName(gameModeName);
-                worldsettings = new WorldSettings(defaultSeed, gametype, generateStructures, bonusChest, WorldType.worldTypes[terrainType]);
-                worldsettings.setWorldName(this.field_146334_a);
+                WorldSettings.GameType gametype = WorldSettings.GameType.getByName(this.gameMode);
+                worldsettings = new WorldSettings(defaultSeed, gametype, this.generateStructuresEnabled, this.bonusChestEnabled, WorldType.WORLD_TYPES[this.selectedIndex]);
+                worldsettings.setGeneratorOptions(this.chunkProviderSettingsJson);
 
-                if(commandsAllowed)
+                if(this.inMoreWorldOptionsDisplay)
                 {
                     worldsettings.enableCommands();
                 }
@@ -130,17 +110,17 @@ public class GuiCreateFixedWorld extends GuiCreateWorld
                 // exists. We're going to flatten the copied save settings with the ones the user just defined.
                 // However, we have to make sure it's JUST the world settings. We need to keep the player's coordinates,
                 // inventory, game mode, and whatever other miscellaneous junk.
-                ISaveFormat saveLoader = new AnvilSaveConverter(new File(this.mc.mcDataDir, "saves"));
-                ISaveHandler isavehandler = saveLoader.getSaveLoader(folderName, false);
+                ISaveFormat saveLoader = new AnvilSaveConverter(new File(this.mc.mcDataDir, "saves"), this.mc.getDataFixer());
+                ISaveHandler isavehandler = saveLoader.getSaveLoader(this.saveDirName, false);
                 WorldInfo worldinfo = isavehandler.loadWorldInfo();
                 worldinfo.populateFromWorldSettings(worldsettings);
 
                 isavehandler.saveWorldInfo(worldinfo);
             }
 
-            if (this.mc.getSaveLoader().canLoadWorld(folderName))
+            if (this.mc.getSaveLoader().canLoadWorld(this.saveDirName))
             {
-                this.mc.launchIntegratedServer(folderName, worldName, worldsettings);
+                this.mc.launchIntegratedServer(this.saveDirName, worldName, worldsettings);
             }
     	}
     	else
@@ -148,7 +128,7 @@ public class GuiCreateFixedWorld extends GuiCreateWorld
             try {
     		super.actionPerformed(guiButton);
             } catch (IOException e) {
-                LDLogger.log(Level.ERROR, "Action couldn't be performed ",e);
+                Lockdown.logger.log(Level.ERROR, "Action couldn't be performed ",e);
             }
     	}
     }

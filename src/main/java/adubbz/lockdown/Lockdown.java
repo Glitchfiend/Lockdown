@@ -1,10 +1,12 @@
 package adubbz.lockdown;
 
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import adubbz.lockdown.eventhandler.WorldCreationEventHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
-import adubbz.lockdown.eventhandler.WorldCreationEventHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -19,14 +21,12 @@ public class Lockdown
     
     public static String templateDirectory;
     
-    public static boolean disableWorldCreation;
+    public static Logger logger = LogManager.getLogger("Lockdown");
     
+    public static boolean disableWorldCreation;
     public static boolean disableGameMode;
     public static boolean disableMoreWorldOptions;
-    
     public static boolean disableMultiplayer;
-    //public static boolean disableQuit;
-
     public static boolean enableOverridingTerrainGen;
 
     @EventHandler
@@ -45,7 +45,6 @@ public class Lockdown
             enableOverridingTerrainGen = config.get("World Creation", "Enable Overriding Template World Settings", false).getBoolean(false);
 
     		disableMultiplayer = config.get("Main Menu", "Disable Multiplayer Button", true).getBoolean(true);
-    		//disableQuit = config.get("Main Menu", "Disable Quit Button", true).getBoolean(true);
     	}
     	catch (Exception e)
     	{
