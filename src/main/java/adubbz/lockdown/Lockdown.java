@@ -27,6 +27,7 @@ public class Lockdown
     public static boolean disableGameMode;
     public static boolean disableMoreWorldOptions;
     public static boolean disableMultiplayer;
+    public static boolean disableSingleplayer;
     public static boolean enableOverridingTerrainGen;
 
     @EventHandler
@@ -45,6 +46,7 @@ public class Lockdown
             enableOverridingTerrainGen = config.get("World Creation", "Enable Overriding Template World Settings", false).getBoolean(false);
 
     		disableMultiplayer = config.get("Main Menu", "Disable Multiplayer Button", true).getBoolean(true);
+    		disableSingleplayer = config.get("Main Menu", "Disable Singleplayer Button", false).getBoolean(false);
     	}
     	catch (Exception e)
     	{

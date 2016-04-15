@@ -2,7 +2,7 @@ package adubbz.lockdown.eventhandler;
 
 import adubbz.lockdown.Lockdown;
 import adubbz.lockdown.gui.GuiCreateFixedWorld;
-import adubbz.lockdown.gui.GuiNonMultiplayerMainMenu;
+import adubbz.lockdown.gui.GuiMainMenuTweaked;
 import net.minecraft.client.gui.GuiCreateWorld;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraftforge.client.event.GuiOpenEvent;
@@ -13,9 +13,11 @@ public class WorldCreationEventHandler
 	@SubscribeEvent
 	public void modifyWorldCreation(GuiOpenEvent event)
 	{
-		if (event.getGui() instanceof GuiMainMenu && Lockdown.disableMultiplayer && !(event.getGui() instanceof GuiNonMultiplayerMainMenu))
+	    boolean overrideMainMenu = (Lockdown.disableMultiplayer || Lockdown.disableSingleplayer);
+	    
+		if (event.getGui() instanceof GuiMainMenu && overrideMainMenu && !(event.getGui() instanceof GuiMainMenuTweaked))
 		{
-			event.setGui(new GuiNonMultiplayerMainMenu());
+			event.setGui(new GuiMainMenuTweaked());
 		}
 		
 		if (event.getGui() instanceof GuiCreateWorld && !(event.getGui() instanceof GuiCreateFixedWorld))
