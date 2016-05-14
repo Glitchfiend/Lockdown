@@ -1,5 +1,6 @@
 package adubbz.lockdown.eventhandler;
 
+import adubbz.lockdown.Lockdown;
 import net.minecraft.client.gui.GuiCreateWorld;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
@@ -15,7 +16,7 @@ public class WorldCreationEventHandler
 	@SubscribeEvent
 	public void modifyWorldCreation(GuiOpenEvent event)
 	{
-		if (event.gui instanceof GuiMainMenu && !(event.gui instanceof GuiNonMultiplayerMainMenu))
+		if (event.gui instanceof GuiMainMenu && Lockdown.disableMultiplayer && !(event.gui instanceof GuiNonMultiplayerMainMenu))
 		{
 			GuiMainMenu guiMainMenu = (GuiMainMenu)event.gui;
 			

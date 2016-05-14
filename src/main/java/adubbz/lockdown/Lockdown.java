@@ -20,6 +20,7 @@ public class Lockdown
     public static String templateDirectory;
     
     public static boolean disableWorldCreation;
+	public static boolean enableTemplate;
     
     public static boolean disableGameMode;
     public static boolean disableMoreWorldOptions;
@@ -37,7 +38,8 @@ public class Lockdown
     		config.load();
     		
     		templateDirectory = config.get("World Creation", "World Template Directory", "template").getString();
-    		disableWorldCreation = config.get("World Creation", "Disable Regular World Creation", true).getBoolean(true);
+    		disableWorldCreation = config.getBoolean("Disable Regular World Creation", "World Creation", true, "Disable regular world creation. Requires a full save in the template folder");
+			enableTemplate = config.getBoolean("Enable Template", "World Creation", disableWorldCreation, "Enable using the template folder");
     		disableGameMode = config.get("World Creation", "Disable Game Mode Button", true).getBoolean(true);
     		disableMoreWorldOptions = config.get("World Creation", "Disable More World Options Button", true).getBoolean(true);
     		
