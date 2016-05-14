@@ -46,7 +46,7 @@ public class GuiCreateFixedWorld extends GuiCreateWorld
 	@Override
     protected void actionPerformed(GuiButton guiButton)
     {
-    	if (Lockdown.disableWorldCreation && guiButton.id == 0)
+    	if ((Lockdown.disableWorldCreation || Lockdown.enableTemplate) && guiButton.id == 0)
     	{
             this.mc.displayGuiScreen((GuiScreen)null);
 
@@ -74,10 +74,14 @@ public class GuiCreateFixedWorld extends GuiCreateWorld
             
             ISaveFormat isaveformat = this.mc.getSaveLoader();
             isaveformat.renameWorld(folderName, worldName);
-            
-            if (this.mc.getSaveLoader().canLoadWorld(folderName))
-            {
-                this.mc.launchIntegratedServer(folderName, worldName, (WorldSettings)null);
+
+            if (Lockdown.disableWorldCreation) {
+                if (this.mc.getSaveLoader().canLoadWorld(folderName))
+                {
+                    this.mc.launchIntegratedServer(folderName, worldName, (WorldSettings)null);
+                }
+            } else {
+                super.actionPerformed(guiButton);
             }
     	}
     	else
