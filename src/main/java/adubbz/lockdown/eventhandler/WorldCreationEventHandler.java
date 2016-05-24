@@ -1,5 +1,6 @@
 package adubbz.lockdown.eventhandler;
 
+import adubbz.lockdown.Lockdown;
 import net.minecraft.client.gui.GuiCreateWorld;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
