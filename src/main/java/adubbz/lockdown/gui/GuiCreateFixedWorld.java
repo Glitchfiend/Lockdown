@@ -12,6 +12,7 @@ import adubbz.lockdown.Lockdown;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiCreateWorld;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.world.GameType;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.chunk.storage.AnvilSaveConverter;
@@ -97,7 +98,7 @@ public class GuiCreateFixedWorld extends GuiCreateWorld
                     }
                 }
 
-                WorldSettings.GameType gametype = WorldSettings.GameType.getByName(this.gameMode);
+                GameType gametype = GameType.parseGameTypeWithDefault(this.gameMode, GameType.NOT_SET);
                 worldsettings = new WorldSettings(defaultSeed, gametype, this.generateStructuresEnabled, this.bonusChestEnabled, WorldType.WORLD_TYPES[this.selectedIndex]);
                 worldsettings.setGeneratorOptions(this.chunkProviderSettingsJson);
 
