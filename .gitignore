@@ -1,10 +1,18 @@
 /build/
 /bin/
+/out/
 /repo/
 /run/
-.gradle/
-.settings/*
-.classpath
-.project
+.idea/*
+/.gradle/
+/.settings/
+/.classpath
+/.project
+
 # OS generated files
 *.DS_Store
+
+# IntelliJ project files
+*.iml
+*.ipr
+*.iws
