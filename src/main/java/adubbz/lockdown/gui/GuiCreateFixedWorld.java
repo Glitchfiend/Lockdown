@@ -41,7 +41,7 @@ public class GuiCreateFixedWorld extends GuiCreateWorld
     		this.buttonList.remove(2); //Game Mode
 
     		this.gameModeDesc1 = "";
-    		this.gameModeDesc2 = "";
+            this.gameModeDesc2 = "";
     	}
     }
 

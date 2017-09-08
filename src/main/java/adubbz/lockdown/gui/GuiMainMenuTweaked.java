@@ -26,25 +26,25 @@ public class GuiMainMenuTweaked extends GuiMainMenu
     	    this.buttonList.remove(0);
     	    offset--;
     	    
-    	    multiplayerButton.yPosition -= 24;
-            realmsButton.yPosition -= 24;
-            modsButton.yPosition -= 24;
+    	    multiplayerButton.y -= 24;
+            realmsButton.y -= 24;
+            modsButton.y -= 24;
             
-            languageButton.yPosition -= 24;
-            optionsButton.yPosition -=24;
-            quitButton.yPosition -= 24;
+            languageButton.y -= 24;
+            optionsButton.y -=24;
+            quitButton.y -= 24;
     	}
     	
     	if (Lockdown.disableMultiplayer)
     	{
         	this.buttonList.remove(1 + offset); //Multiplayer Button
     		
-        	realmsButton.yPosition -= 24;
-    		modsButton.yPosition -= 24;
+        	realmsButton.y -= 24;
+    		modsButton.y -= 24;
     		
-    		languageButton.yPosition -= 24;
-    		optionsButton.yPosition -=24;
-    		quitButton.yPosition -= 24;
+    		languageButton.y -= 24;
+    		optionsButton.y -=24;
+    		quitButton.y -= 24;
     	}
     }
 }

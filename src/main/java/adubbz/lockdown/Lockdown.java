@@ -13,15 +13,15 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = "Lockdown", name = "Lockdown", clientSideOnly = true)
+@Mod(modid = "lockdown", name = "Lockdown", clientSideOnly = true)
 public class Lockdown 
 {
-    @Instance("Lockdown")
+    @Instance("lockdown")
     public static Lockdown instance;
     
     public static String templateDirectory;
     
-    public static Logger logger = LogManager.getLogger("Lockdown");
+    public static Logger logger = LogManager.getLogger("lockdown");
     
     public static boolean disableWorldCreation;
     public static boolean disableGameMode;
@@ -41,7 +41,7 @@ public class Lockdown
     		
     		templateDirectory = config.get("World Creation", "World Template Directory", "template").getString();
     		disableWorldCreation = config.get("World Creation", "Disable Regular World Creation", true).getBoolean(true);
-    		disableGameMode = config.get("World Creation", "Disable Game Mode Button", true).getBoolean(true);
+			disableGameMode = config.get("World Creation", "Disable Game Mode Button", true).getBoolean(true);
     		disableMoreWorldOptions = config.get("World Creation", "Disable More World Options Button", true).getBoolean(true);
             enableOverridingTerrainGen = config.get("World Creation", "Enable Overriding Template World Settings", false).getBoolean(false);
 
