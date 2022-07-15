@@ -6,27 +6,16 @@ package adubbz.lockdown.mixin.client;
 
 import adubbz.lockdown.Config;
 import adubbz.lockdown.Lockdown;
-import com.google.gson.JsonElement;
-import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.DynamicOps;
-import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.Lifecycle;
-import net.minecraft.Util;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
-import net.minecraft.client.gui.screens.worldselection.EditWorldScreen;
+import net.minecraft.client.gui.screens.worldselection.WorldCreationContext;
 import net.minecraft.client.gui.screens.worldselection.WorldGenSettingsComponent;
-import net.minecraft.client.gui.screens.worldselection.WorldSelectionList;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.level.LevelSettings;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
@@ -43,7 +32,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.locks.Lock;
 
 @Mixin(CreateWorldScreen.class)
 public abstract class MixinCreateWorldScreen extends Screen
@@ -87,8 +75,8 @@ public abstract class MixinCreateWorldScreen extends Screen
         if (Config.disableGameMode.get())
         {
             this.modeButton.visible = false;
-            this.gameModeHelp1 = new TextComponent("");
-            this.gameModeHelp2 = new TextComponent("");
+            this.gameModeHelp1 = Component.translatable("");
+            this.gameModeHelp2 = Component.translatable("");
         }
 
         if (Config.disableCheats.get())
@@ -152,9 +140,9 @@ public abstract class MixinCreateWorldScreen extends Screen
                     Lockdown.LOGGER.info("Replacing world data...");
 
                     // Create the new world data
-                    WorldGenSettings worldGenSettings = this.worldGenSettingsComponent.makeSettings(this.hardCore);
-                    LevelSettings levelSettings = this.createLevelSettings(worldGenSettings.isDebug());
-                    WorldData newWorldData = new PrimaryLevelData(levelSettings, worldGenSettings, Lifecycle.stable());
+                    WorldCreationContext worldCreationContext = this.worldGenSettingsComponent.createFinalSettings(this.hardCore);
+                    LevelSettings levelSettings = this.createLevelSettings(worldCreationContext.worldGenSettings().isDebug());
+                    WorldData newWorldData = new PrimaryLevelData(levelSettings, worldCreationContext.worldGenSettings(), worldCreationContext.worldSettingsStability());
 
                     // Save the new world data
                     storageAccess.saveDataTag(this.worldGenSettingsComponent.registryHolder(), newWorldData);
@@ -170,7 +158,7 @@ public abstract class MixinCreateWorldScreen extends Screen
             }
 
             // Load the level
-            this.minecraft.loadLevel(this.initName);
+            this.minecraft.createWorldOpenFlows().loadLevel(this, this.initName);
 
             // Cancel to prevent normal world creation
             ci.cancel();
@@ -182,6 +170,6 @@ public abstract class MixinCreateWorldScreen extends Screen
 
     private void queueLoadScreen()
     {
-        this.minecraft.forceSetScreen(new GenericDirtMessageScreen(new TranslatableComponent("selectWorld.data_read")));
+        this.minecraft.forceSetScreen(new GenericDirtMessageScreen(Component.translatable("selectWorld.data_read")));
     }
 }
