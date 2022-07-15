@@ -1,8 +1,10 @@
 /build/
 /bin/
 /out/
+/Mixin/
 /repo/
 /run/
+/logs/
 .idea/*
 /.gradle/
 /.settings/
@@ -16,3 +18,11 @@
 *.iml
 *.ipr
 *.iws
+
+*.launch
+mappings/.gradle/
+#mappings/mcp/
+mappings/build/
+mappings/*.csv
+mappings/.project
+mappings/last_updated.json

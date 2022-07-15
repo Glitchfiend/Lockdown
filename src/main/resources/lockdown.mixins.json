@@ -1,0 +1,16 @@
+{
+    "required": true,
+    "package": "adubbz.lockdown.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "refmap": "lockdown.refmap.json",
+    "mixins": [
+    ],
+    "client": [
+        "client.MixinCreateWorldScreen",
+        "client.MixinTitleScreen"
+    ],
+    "injectors": {
+      "defaultRequire": 1
+    },
+    "minVersion": "0.8.4"
+  }

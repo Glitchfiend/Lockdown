@@ -1,0 +1,20 @@
+modLoader="javafml"
+license="All Rights Reserved"
+loaderVersion="[40,)"
+issueTrackerURL="https://github.com/Glitchfiend/Lockdown/issues"
+displayURL="https://minecraft.curseforge.com/projects/lockdown"
+logoFile="ldn_logo.png"
+
+[[mods]]
+    modId="lockdown"
+    version="${file.jarVersion}"
+    displayName="Lockdown"
+	authors="Adubbz"
+    description="Allows the removal of a few GUI elements, and allows for a world to be copied instead when a new world should be created."
+
+[[dependencies.lockdown]]
+    modId="forge"
+    mandatory=true
+    versionRange="[40.1.0,)"
+    ordering="NONE"
+    side="BOTH"
