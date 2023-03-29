@@ -1,6 +1,6 @@
 modLoader="javafml"
 license="All Rights Reserved"
-loaderVersion="[40,)"
+loaderVersion="[36,)"
 issueTrackerURL="https://github.com/Glitchfiend/Lockdown/issues"
 displayURL="https://minecraft.curseforge.com/projects/lockdown"
 logoFile="ldn_logo.png"
@@ -15,6 +15,6 @@ logoFile="ldn_logo.png"
 [[dependencies.lockdown]]
     modId="forge"
     mandatory=true
-    versionRange="[40.1.0,)"
+    versionRange="[36.2.34,)"
     ordering="NONE"
     side="BOTH"

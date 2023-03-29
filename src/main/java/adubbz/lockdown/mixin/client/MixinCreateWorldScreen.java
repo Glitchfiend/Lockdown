@@ -6,33 +6,26 @@ package adubbz.lockdown.mixin.client;
 
 import adubbz.lockdown.Config;
 import adubbz.lockdown.Lockdown;
-import com.google.gson.JsonElement;
-import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.DynamicOps;
-import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.Lifecycle;
-import net.minecraft.Util;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.CycleButton;
-import net.minecraft.client.gui.components.toasts.SystemToast;
-import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
-import net.minecraft.client.gui.screens.worldselection.EditWorldScreen;
-import net.minecraft.client.gui.screens.worldselection.WorldGenSettingsComponent;
-import net.minecraft.client.gui.screens.worldselection.WorldSelectionList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.resources.RegistryOps;
+import net.minecraft.client.gui.screen.CreateWorldScreen;
+import net.minecraft.client.gui.screen.DirtMessageScreen;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.WorldOptionsScreen;
+import net.minecraft.client.gui.toasts.SystemToast;
+import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.datafix.codec.DatapackCodec;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.level.LevelSettings;
-import net.minecraft.world.level.levelgen.WorldGenSettings;
-import net.minecraft.world.level.storage.LevelStorageSource;
-import net.minecraft.world.level.storage.PrimaryLevelData;
-import net.minecraft.world.level.storage.WorldData;
+import net.minecraft.world.GameRules;
+import net.minecraft.world.GameType;
+import net.minecraft.world.WorldSettings;
+import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
+import net.minecraft.world.storage.IServerConfiguration;
+import net.minecraft.world.storage.SaveFormat;
+import net.minecraft.world.storage.ServerWorldInfo;
 import org.apache.commons.io.FileUtils;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -43,22 +36,40 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.locks.Lock;
 
 @Mixin(CreateWorldScreen.class)
 public abstract class MixinCreateWorldScreen extends Screen
 {
     @Shadow
+    private TextFieldWidget nameEdit;
+
+    @Shadow
+    private CreateWorldScreen.GameMode gameMode;
+
+    @Shadow
+    private Difficulty effectiveDifficulty;
+
+    @Shadow
+    private boolean commands;
+
+    @Shadow
     private String initName;
+
+    @Shadow
+    private GameRules gameRules;
+
     @Shadow
     public boolean hardCore;
 
     @Shadow
-    private CycleButton modeButton;
+    protected DatapackCodec dataPacks;
+
     @Shadow
-    private CycleButton<Difficulty> difficultyButton;
+    private Button modeButton;
     @Shadow
-    private CycleButton<Boolean> commandsButton;
+    private Button difficultyButton;
+    @Shadow
+    private Button commandsButton;
 
     @Shadow
     private Button moreOptionsButton;
@@ -68,15 +79,15 @@ public abstract class MixinCreateWorldScreen extends Screen
     private Button dataPacksButton;
 
     @Shadow
-    private Component gameModeHelp1;
+    private ITextComponent gameModeHelp1;
     @Shadow
-    private Component gameModeHelp2;
+    private ITextComponent gameModeHelp2;
 
     @Shadow
     @Final
-    public WorldGenSettingsComponent worldGenSettingsComponent;
+    public WorldOptionsScreen worldGenSettingsComponent;
 
-    protected MixinCreateWorldScreen(Component component)
+    protected MixinCreateWorldScreen(ITextComponent component)
     {
         super(component);
     }
@@ -87,8 +98,8 @@ public abstract class MixinCreateWorldScreen extends Screen
         if (Config.disableGameMode.get())
         {
             this.modeButton.visible = false;
-            this.gameModeHelp1 = new TextComponent("");
-            this.gameModeHelp2 = new TextComponent("");
+            this.gameModeHelp1 = new TranslationTextComponent("");
+            this.gameModeHelp2 = new TranslationTextComponent("");
         }
 
         if (Config.disableCheats.get())
@@ -141,7 +152,7 @@ public abstract class MixinCreateWorldScreen extends Screen
 
             try
             {
-                LevelStorageSource.LevelStorageAccess storageAccess = this.minecraft.getLevelSource().createAccess(this.initName);
+                SaveFormat.LevelSave storageAccess = this.minecraft.getLevelSource().createAccess(this.initName);
 
                 // Rename the level for our new name
                 storageAccess.renameLevel(this.initName);
@@ -152,9 +163,9 @@ public abstract class MixinCreateWorldScreen extends Screen
                     Lockdown.LOGGER.info("Replacing world data...");
 
                     // Create the new world data
-                    WorldGenSettings worldGenSettings = this.worldGenSettingsComponent.makeSettings(this.hardCore);
-                    LevelSettings levelSettings = this.createLevelSettings(worldGenSettings.isDebug());
-                    WorldData newWorldData = new PrimaryLevelData(levelSettings, worldGenSettings, Lifecycle.stable());
+                    DimensionGeneratorSettings worldGenSettings = this.worldGenSettingsComponent.makeSettings(this.hardCore);
+                    WorldSettings levelSettings = this.createLevelSettings(worldGenSettings.isDebug());
+                    IServerConfiguration newWorldData = new ServerWorldInfo(levelSettings, worldGenSettings, Lifecycle.stable());
 
                     // Save the new world data
                     storageAccess.saveDataTag(this.worldGenSettingsComponent.registryHolder(), newWorldData);
@@ -177,11 +188,20 @@ public abstract class MixinCreateWorldScreen extends Screen
         }
     }
 
-    @Shadow
-    abstract LevelSettings createLevelSettings(boolean isDebug);
+    private WorldSettings createLevelSettings(boolean isDebug)
+    {
+        String s = this.nameEdit.getValue().trim();
+        if (isDebug) {
+            GameRules gamerules = new GameRules();
+            gamerules.getRule(GameRules.RULE_DAYLIGHT).set(false, (MinecraftServer)null);
+            return new WorldSettings(s, GameType.SPECTATOR, false, Difficulty.PEACEFUL, true, gamerules, DatapackCodec.DEFAULT);
+        } else {
+            return new WorldSettings(s, this.gameMode.gameType, this.hardCore, this.effectiveDifficulty, this.commands && !this.hardCore, this.gameRules, this.dataPacks);
+        }
+    }
 
     private void queueLoadScreen()
     {
-        this.minecraft.forceSetScreen(new GenericDirtMessageScreen(new TranslatableComponent("selectWorld.data_read")));
+        this.minecraft.forceSetScreen(new DirtMessageScreen(new TranslationTextComponent("selectWorld.data_read")));
     }
 }
